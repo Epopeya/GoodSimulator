@@ -1,9 +1,8 @@
-
 #include <SFML/Graphics.hpp>
+#include <chrono>
 #include <cstdio>
 #include <set>
 #include <vector>
-#include <chrono>
 
 #include "SFML/Graphics/Color.hpp"
 #include "SFML/Graphics/Rect.hpp"
@@ -15,17 +14,17 @@
 #include "map.h"
 #include "robot_code.h" // bad, but we need original code
 
+sf::Vector2i windowSize = sf::Vector2i(600, 600);
 
-sf::Vector2i windowSize = sf::Vector2i(1200, 600);
-
+bool paused = false;
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "My window");
 	sf::View mapView(sf::FloatRect(0, -3000, 3000, 3000));
-	mapView.setViewport(sf::FloatRect(0, 0, 0.5f, 1));
+	/* mapView.setViewport(sf::FloatRect(0, 0, 0.5f, 1)); */
 
-	sf::View debugView(sf::FloatRect(0, 0, 3000, 3000));
-	debugView.setViewport(sf::FloatRect(0.5f, 0, 0.5f, 1));
+	/* sf::View debugView(sf::FloatRect(0, 0, 3000, 3000)); */
+	/* debugView.setViewport(sf::FloatRect(0.5f, 0, 0.5f, 1)); */
 	mapView.zoom(1.3);
 
 	setup();
@@ -42,6 +41,7 @@ int main()
 				{
 				case (sf::Keyboard::Key::P): {
 				}
+					paused = !paused;
 				}
 			}
 		}
@@ -49,12 +49,15 @@ int main()
 		// main loop
 
 		window.setView(mapView);
-		renderMap(&window);
-		loop();
-		robot.updateMovement();
+		/* renderMap(&window); */
+		if (!paused)
+		{
+			loop();
+			robot.updateMovement();
+		}
 		robot.render(&window);
 
-		window.setView(debugView);
+		/* window.setView(debugView); */
 
 		// end loop
 		window.display();

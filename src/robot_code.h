@@ -162,13 +162,11 @@ void loop()
 			{
 				debug_msg("setting orientation to %i", orientation);
 				orientation = 1;
-				position.y = 500 - start_distance_y;
 			}
 			else if (right_distance > 1500)
 			{
 				debug_msg("setting orientation to %i", orientation);
 				orientation = -1;
-				position.y = start_distance_y - 500;
 			}
 		}
 		// Standard Navigation

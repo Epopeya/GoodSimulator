@@ -8,7 +8,7 @@ public:
 	void setup() {};
 	int update()
 	{
-		rotation = robot.angle;
+		rotation = robot.imu_angle;
 		return true;
 	};
 	float rotation = 0;

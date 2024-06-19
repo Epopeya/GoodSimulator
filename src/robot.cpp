@@ -12,36 +12,44 @@ robotSimulation::robotSimulation(sf::Vector2f start_pos, float start_angle)
 	: pos(start_pos)
 	, angle(start_angle)
 {
+	updateMapData();
 }
 
 void robotSimulation::updateMovement()
 {
-	updateDistances();
+	updateMapData();
+
+	// servo imu
 	servo_angle = fmin(fmax(servo_angle, -M_PI / 4), M_PI / 4);
-	angle += (servo_angle * servo_speed); // servo is reversed
+	imu_angle += (servo_angle * servo_speed);
+
+	// encoders
+	cum_dist += motor_speed / encoder_to_mm;
+	int encoder_diff = floor(cum_dist);
+	cum_dist -= encoder_diff;
+	total_encoders += encoder_diff;
+
+	// movement
 	sf::Vector2f direction_vector = sf::Vector2f(cos(angle), sin(angle));
 	direction_vector = direction_vector * motor_speed;
 
-	cum_dist += motor_speed / encoder_to_mm;
-	int encoder_diff = floor(cum_dist);
-	/* printf("cum: %f, enc: %i\n", cum_dist, encoder_diff); */
-	cum_dist -= encoder_diff;
-	total_encoders += encoder_diff;
-	/* printf("angle: %f, servo: %f, speed: %f, encoders: %i\n", angle, servo_angle, motor_speed, encoder_diff); */
-	/* printf("x: %f, y: %f\n", pos.x - 1500, pos.y); */
-
+	angle += (servo_angle * servo_speed);
 	pos += direction_vector;
 }
 
-void robotSimulation::updateDistances()
+void robotSimulation::updateMapData()
 {
-	left_dist = getRayIntersect(pos, angle + (M_PI / 2));
-	front_dist = getRayIntersect(pos, angle);
-	right_dist = getRayIntersect(pos, angle - (M_PI / 2));
+	left_dist = map.getRayIntersect(pos, angle + (M_PI / 2));
+	front_dist = map.getRayIntersect(pos, angle);
+	right_dist = map.getRayIntersect(pos, angle - (M_PI / 2));
+
+	blocks = map.getVisibleBlocks(pos, angle);
 }
 
 void robotSimulation::render(sf::RenderWindow* window)
 {
+	map.render(window);
+
 	sf::Vector2f flip_pos = sf::Vector2f(pos.x, -pos.y);
 
 	sf::RectangleShape rayShape(sf::Vector2f(10000, 10));
@@ -98,4 +106,4 @@ void robotSimulation::render(sf::RenderWindow* window)
 }
 
 // main robot
-robotSimulation robot = robotSimulation(sf::Vector2f(1500, 500), 0);
+robotSimulation robot = robotSimulation(sf::Vector2f(1500, 2500), 3.13);

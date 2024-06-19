@@ -5,6 +5,16 @@
 
 int last_encoder_read = 0;
 
+typedef struct
+{
+	bool in_scene;
+	int x;
+	int y;
+} block_t;
+
+extern block_t red_block = {.in_scene = false, .x = -1, .y = -1};
+extern block_t green_block = {.in_scene = false, .x = -1, .y = -1};
+extern float battery = 8.2f;
 void slaveSetup()
 {
 	printf("Slave setup completed!\n");
@@ -24,19 +34,15 @@ int getEncoders()
 	last_encoder_read = robot.total_encoders;
 	return enc;
 };
-void slaveProcessSerial() {
+void slaveProcessSerial()
+{
 	left_distance = robot.left_dist;
 	right_distance = robot.right_dist;
 	front_distance = robot.front_dist;
+
+	red_block.in_scene = false;
+	green_block.in_scene = false;
+
+	if (robot.blocks.x != 0) { red_block.in_scene = true; }
+	if (robot.blocks.y != 0) { green_block.in_scene = true; }
 };
-
-typedef struct
-{
-	bool in_scene;
-	int x;
-	int y;
-} block_t;
-
-extern block_t red_block = {.in_scene = false, .x = -1, .y = -1};
-extern block_t green_block = {.in_scene = false, .x = -1, .y = -1};
-extern float battery = 8.2f;

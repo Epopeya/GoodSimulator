@@ -1,4 +1,6 @@
 #pragma once
+#include <cmath>
+
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/System/Vector2.hpp"
 #include "map.h"
@@ -10,14 +12,15 @@ public:
 	robotSimulation(sf::Vector2f start_pos, float start_angle);
 
 	void updateMovement(); // dt in seconds
-	void updateDistances();
+	void updateMapData();
 	void render(sf::RenderWindow* window);
 
+	Map map;
+
 	// public to expose it to the original code
-	sf::Vector2f pos;
-	float angle = 0;
 	float servo_angle = 0;
-	float servo_speed = 0.045f; // rad / sec < 0.05
+
+	float imu_angle = 0;
 
 	float motor_speed = 0; // mm / sec
 	float total_encoders = 0;
@@ -26,9 +29,17 @@ public:
 	float front_dist;
 	float right_dist;
 
+	sf::Vector2i blocks; // (num_red, num_green)
+
 private:
-	const float encoder_to_mm = 1.6f;
-	float cum_dist = 0; // used to calculate encoders
+	sf::Vector2f pos;
+	float angle = 0;
+
+	float cum_dist = 0;
+
+	const float servo_speed = 0.045f; // rad / sec < 0.05
+	const float cam_fov = M_PI / 2;	  // half the actual fov
+	const float encoder_to_mm = 1.6f; // mm / enc
 };
 
 extern robotSimulation robot; // WARN TODO: this is global
