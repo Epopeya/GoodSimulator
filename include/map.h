@@ -14,8 +14,8 @@ public:
 
 	float getRayIntersect(sf::Vector2f ray_pos, float ray_angle);
 	float getRayIntersect(sf::Vector2f ray_pos, sf::Vector2f ray_end);
-	sf::Vector2i getVisibleBlocks(sf::Vector2f pos, float angle); // (num_red, num_green)
-	void render(sf::RenderWindow* window);
+	sf::Vector2i getVisibleBlocks(sf::Vector2f pos, float angle, float fov); // (num_red, num_green)
+	void render();
 
 	sf::RectangleShape inner_rect;
 	sf::RectangleShape outer_rect;
@@ -26,7 +26,6 @@ public:
 	/* std::vector<sf::Vector2f> green_blocks = {}; */
 
 private:
-	float cam_pov = M_PI / 2;
 	float rayLineDist(sf::Vector2f p0, sf::Vector2f p1, sf::Vector2f p2, sf::Vector2f p3);
 	float outerRayIntersect(sf::Vector2f ray_pos, sf::Vector2f ray_end);
 	float innerRayIntersect(sf::Vector2f ray_pos, sf::Vector2f ray_end);

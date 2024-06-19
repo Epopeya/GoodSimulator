@@ -11,9 +11,9 @@ class robotSimulation
 public:
 	robotSimulation(sf::Vector2f start_pos, float start_angle);
 
-	void updateMovement(); // dt in seconds
+	void update();
 	void updateMapData();
-	void render(sf::RenderWindow* window);
+	void render();
 
 	Map map;
 
@@ -22,7 +22,7 @@ public:
 
 	float imu_angle = 0;
 
-	float motor_speed = 0; // mm / sec
+	float motor_speed = 0; // mm / loop
 	float total_encoders = 0;
 
 	float left_dist;
@@ -37,7 +37,7 @@ private:
 
 	float cum_dist = 0;
 
-	const float servo_speed = 0.045f; // rad / sec < 0.05
+	const float servo_speed = 0.05f; // rad / loop
 	const float cam_fov = M_PI / 2;	  // half the actual fov
 	const float encoder_to_mm = 1.6f; // mm / enc
 };

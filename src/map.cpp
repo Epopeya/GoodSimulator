@@ -6,6 +6,7 @@
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/System/Vector2.hpp"
+#include "render.h"
 
 Map::Map()
 	: inner_rect(sf::Vector2f(1000, 1000)) // this scales upward... fuck
@@ -26,7 +27,8 @@ float Map::getRayIntersect(sf::Vector2f ray_pos, sf::Vector2f ray_end)
 	return fmin(outerRayIntersect(ray_pos, ray_end), innerRayIntersect(ray_pos, ray_end));
 }
 
-sf::Vector2i Map::getVisibleBlocks(sf::Vector2f pos, float angle)
+// TODO: this fails sometimes around 180 / -180 degrees, and rendering should me moved somewhere else
+sf::Vector2i Map::getVisibleBlocks(sf::Vector2f pos, float angle, float fov)
 {
 	sf::Vector2i out_blocks(0, 0); // red, green
 	float norm_angle = normalizeAngle(angle);
@@ -35,11 +37,10 @@ sf::Vector2i Map::getVisibleBlocks(sf::Vector2f pos, float angle)
 	{
 		sf::Vector2f block_dir = block_pos - pos;
 		float block_angle = std::atan2(block_dir.y, block_dir.x) - norm_angle;
-		/* if (block_angle > M_PI) { block_angle = block_angle - 2 * M_PI; } */
-		/* if (block_angle < M_PI) { block_angle = block_angle + 2 * M_PI; } */
 		float dist = innerRayIntersect(pos, block_pos);
-		if (block_angle > -cam_pov && block_angle < cam_pov && dist > 5000)
+		if (block_angle > -fov && block_angle < fov && dist > 5000)
 		{
+			line(pos, block_pos, sf::Color(255, 0, 0));
 			out_blocks.x++;
 		}
 	}
@@ -49,42 +50,27 @@ sf::Vector2i Map::getVisibleBlocks(sf::Vector2f pos, float angle)
 		sf::Vector2f block_dir = block_pos - pos;
 		float block_angle = std::atan2(block_dir.y, block_dir.x) - norm_angle;
 		float dist = innerRayIntersect(pos, block_pos);
-		if (block_angle > -cam_pov && block_angle < cam_pov && dist > 5000)
+		if (block_angle > -fov && block_angle < fov && dist > 5000)
 		{
+			line(pos, block_pos, sf::Color(0, 255, 0));
 			out_blocks.y++;
 		}
 	}
 	return out_blocks;
 }
 
-void Map::render(sf::RenderWindow* window)
+void Map::render()
 {
-	sf::RectangleShape inner_block(inner_rect.getSize());
-	sf::RectangleShape outer_block(outer_rect.getSize());
+	rectFill(inner_rect.getPosition(), inner_rect.getSize(), sf::Color(150, 150, 150));
+	rectOutline(outer_rect.getPosition(), outer_rect.getSize(), 100, sf::Color(150, 150, 150));
 
-	inner_block.setPosition(inner_rect.getPosition().x, -inner_rect.getPosition().y - inner_rect.getSize().y);
-	inner_block.setFillColor(sf::Color(255, 0, 0));
-
-	outer_block.setPosition(outer_rect.getPosition().x, outer_rect.getPosition().y - 3000);
-	outer_block.setFillColor(sf::Color(0, 0, 0, 0));
-	outer_block.setOutlineColor(sf::Color(0, 255, 0));
-	outer_block.setOutlineThickness(100);
-
-	window->draw(inner_block);
-	window->draw(outer_block);
-
-	sf::RectangleShape block(sf::Vector2f(40, 40));
-	block.setFillColor(sf::Color(255, 0, 0));
 	for (sf::Vector2f p : red_blocks)
 	{
-		block.setPosition(p.x, -p.y);
-		window->draw(block);
+		rectFill(p, sf::Vector2f(50, 50), sf::Color(255, 0, 0), 0, true);
 	}
-	block.setFillColor(sf::Color(0, 255, 0));
 	for (sf::Vector2f p : green_blocks)
 	{
-		block.setPosition(p.x, -p.y);
-		window->draw(block);
+		rectFill(p, sf::Vector2f(50, 50), sf::Color(0, 255, 0), 0, true);
 	}
 }
 
