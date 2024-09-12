@@ -1,17 +1,14 @@
 #pragma once
 #include "Arduino.h"
 #include "robot.h"
+#include <vector>
 
-extern float front_distance = robot.front_dist;
-extern float right_distance = robot.right_dist;
-extern float left_distance = robot.left_dist;
-void lidarSetup() {
-};
-vector2_t lidarInitialPosition()
-{
-	vector2_t out;
-	out.x = robot.front_dist;
-	out.y = robot.left_dist;
-	return out;
-};
-void lidarStart() {};
+// External variable declarations
+extern float front_distance;
+extern float right_distance;
+extern float left_distance;
+
+// Function declarations
+void lidarSetup();
+std::vector<float> lidarInitialDistances();
+void lidarStart();

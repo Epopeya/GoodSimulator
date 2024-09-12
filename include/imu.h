@@ -1,15 +1,9 @@
-#pragma once
 #include "robot.h"
 
-class Imu
-{
+class Imu {
 public:
-	Imu() {};
-	void setup() {};
-	int update()
-	{
-		rotation = robot.imu_angle;
-		return true;
-	};
-	float rotation = 0;
+    Imu();
+    void setup();
+    int update();
+    float rotation = 0;
 };

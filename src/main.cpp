@@ -12,49 +12,48 @@ bool paused = false;
 
 void eventHandler()
 {
-	sf::Event event;
-	while (window->pollEvent(event))
-	{
-		if (event.type == sf::Event::Closed) window->close();
-		if (event.type == sf::Event::KeyPressed)
-		{
-			switch (event.key.code)
-			{
-			case (sf::Keyboard::Key::P): {
-			}
-				paused = !paused;
-			}
-		}
-	}
+    sf::Event event;
+    while (window->pollEvent(event)) {
+        if (event.type == sf::Event::Closed)
+            window->close();
+        if (event.type == sf::Event::KeyPressed) {
+            switch (event.key.code) {
+            case (sf::Keyboard::Key::P): {
+            }
+                paused = !paused;
+            }
+        }
+    }
 }
 
 int main()
 {
-	window = new sf::RenderWindow(sf::VideoMode(600, 600), "Simulation");
+    window = new sf::RenderWindow(sf::VideoMode(600, 600), "Simulation");
 
-	sf::View mapView(sf::FloatRect(0, -3000, 3000, 3000));
-	mapView.zoom(1.3);
-	window->setView(mapView);
+    sf::View mapView(sf::FloatRect(0, -3000, 3000, 3000));
+    mapView.zoom(1.3);
+    window->setView(mapView);
 
-	// robot_code.h setup
-	setup();
+    // robot_code.h setup
+    setup();
 
-	while (window->isOpen())
-	{
-		eventHandler();
+    while (window->isOpen()) {
+        eventHandler();
 
-		if (paused) { continue; }
-		window->clear(sf::Color::Black);
+        if (paused) {
+            continue;
+        }
+        window->clear(sf::Color::Black);
 
-		// logic
-		loop();
-		robot.update();
+        // logic
+        loop();
+        robot.update();
 
-		// rendering
-		robot.render();
+        // rendering
+        robot.render();
 
-		window->display();
-		window->setFramerateLimit(60); // TODO: remove timers from robot_code, make millis and micros fixed
-	}
-	return 0;
+        window->display();
+        window->setFramerateLimit(60); // TODO: remove timers from robot_code, make millis and micros fixed
+    }
+    return 0;
 }

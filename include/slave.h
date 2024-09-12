@@ -3,46 +3,23 @@
 #include "lidar.h"
 #include "robot.h"
 
-int last_encoder_read = 0;
+// Global variables and structures
+extern int last_encoder_read;
 
 typedef struct
 {
-	bool in_scene;
-	int x;
-	int y;
+    bool in_scene;
+    int x;
+    int y;
 } block_t;
 
-extern block_t red_block = {.in_scene = false, .x = -1, .y = -1};
-extern block_t green_block = {.in_scene = false, .x = -1, .y = -1};
-extern float battery = 8.2f;
-void slaveSetup()
-{
-	printf("Slave setup completed!\n");
-};
-void servoAngle(float angle)
-{
-	robot.servo_angle = angle;
-};
-void motorSpeed(int speed)
-{
-	printf("setting motorspeed to: %i\n", speed);
-	robot.motor_speed = speed * 0.1;
-};
-int getEncoders()
-{
-	int enc = robot.total_encoders - last_encoder_read;
-	last_encoder_read = robot.total_encoders;
-	return enc;
-};
-void slaveProcessSerial()
-{
-	left_distance = robot.left_dist;
-	right_distance = robot.right_dist;
-	front_distance = robot.front_dist;
+extern block_t red_block;
+extern block_t green_block;
+extern float battery;
 
-	red_block.in_scene = false;
-	green_block.in_scene = false;
-
-	if (robot.blocks.x != 0) { red_block.in_scene = true; }
-	if (robot.blocks.y != 0) { green_block.in_scene = true; }
-};
+// Function declarations
+void slaveSetup();
+void servoAngle(float angle);
+void motorSpeed(int speed);
+int getEncoders();
+void slaveProcessSerial();
